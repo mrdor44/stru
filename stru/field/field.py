@@ -225,10 +225,14 @@ class StringField(PrimitiveField):
             return StringField('{:d}s'.format(num))
         raise NotImplementedError('Arrays of strings not implemented')
 
+    def pack(self, value, source_obj):
+        assert isinstance(value, str)
+        return super().pack(value.encode('ascii'), source_obj)
+
     def unpack(self, buf, target_cls, other_fields):
         # struct.unpack() doesnt stop unpacking on null terminator - it will give us the null terminator as well
         # so we trim it
-        return super(StringField, self).unpack(buf, target_cls, other_fields).split('\x00', 1)[0]
+        return super(StringField, self).unpack(buf, target_cls, other_fields).split('\x00', 1)[0].decode('ascii')
 
 
 # noinspection PyAbstractClass
@@ -425,16 +429,20 @@ class BufferField(NonPrimitiveField):
         if value is None:
             return
         length = self._get_length_field_value(obj)
-        StringField('{:d}s'.format(length)).validate_value(obj, value, field_name)
+        if not isinstance(value, bytes):
+            raise TypeError('Expected bytes, got: {}'.format(type(value)))
+        if len(value) > length:
+            raise ValueError('Buffer "{value}" too long! len({field}) = {max}'
+                             .format(value=value, field=field_name, max=length))
 
     def pack(self, value, source_obj):
         # When packing and unpacking, we use PrimitiveField to avoid the additional processing StringField does
         length = self._get_length_field_value(source_obj)
-        return PrimitiveField('{:d}s'.format(length)).pack(value, source_obj)
+        return StringField('{:d}s'.format(length)).pack(value.decode('ascii'), source_obj)
 
     def unpack(self, buf, target_cls, other_fields):
         length = self._validate_length_value(other_fields[self._get_length_field_name(target_cls)])
-        return PrimitiveField('{:d}s'.format(length)).unpack(buf, target_cls, other_fields)
+        return PrimitiveField('{:d}s'.format(length)).unpack(buf, target_cls, other_fields).decode('ascii')
 
     def _get_length_field_name(self, cls):
         length_field_name = cls._fields.get(self._length_field_obj, None)

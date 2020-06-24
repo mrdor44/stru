@@ -15,8 +15,8 @@ class Boo(Struct):
 
 class BuffersTests(StructTestCase, unittest.TestCase):
     def create_target(self):
-        obj = Boo(a=4, b=2, c='abcd')
-        buff = '\x04\x02abcd'
+        obj = Boo(a=4, b=2, c=b'abcd')
+        buff = b'\x04\x02abcd'
         return obj, buff
 
     def test_lengths(self):
@@ -30,28 +30,28 @@ class BuffersTests(StructTestCase, unittest.TestCase):
         with self.assertRaises(TypeError):
             self.obj.c = [4, 4, 4, 4]
         with self.assertRaises(ValueError):
-            self.obj.c = 'abcde'
+            self.obj.c = b'abcde'
         self.obj.a = 2
         with self.assertRaises(ValueError):
-            self.obj.c = 'abcd'
-        self.obj.c = 'ab'
+            self.obj.c = b'abcd'
+        self.obj.c = b'ab'
 
 
 class BuffersWithNullTerminatorsTests(StructTestCase, unittest.TestCase):
     def create_target(self):
-        obj = Boo(a=4, b=2, c='\x00a\x00b')
-        buff = '\x04\x02\x00a\x00b'
+        obj = Boo(a=4, b=2, c=b'\x00a\x00b')
+        buff = b'\x04\x02\x00a\x00b'
         return obj, buff
 
 
 class BufferExceptionsTests(unittest.TestCase):
     def test_invalid_length(self):
         with self.assertRaises(DependencyInvalidValueException):
-            Boo(a=-1, c='a')
+            Boo(a=-1, c=b'a')
 
     def test_missing_length(self):
         with self.assertRaises(DependencyNoneException):
-            Boo(c='a')
+            Boo(c=b'a')
 
     def test_length_not_in_class(self):
         x = 5
