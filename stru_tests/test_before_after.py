@@ -1,6 +1,6 @@
 from stru import Endianess, FieldType
 from stru.stru_struct import Struct
-from tests.utils import EnhancedStructTestCase, const
+from stru_tests.struct_test_case import StructTestCase, const
 
 import unittest
 
@@ -22,7 +22,7 @@ class Altered(Struct):
                           after_pack=asserter('\x0b\x0c'), after_unpack=asserter([11, 12]))
 
 
-class BeforeAfterTests(EnhancedStructTestCase, unittest.TestCase):
+class BeforeAfterTests(StructTestCase, unittest.TestCase):
     def create_target(self):
         obj = Altered()
         buff = '\x00\x0a' '\x0b\x0c'

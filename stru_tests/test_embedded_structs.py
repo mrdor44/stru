@@ -1,5 +1,5 @@
 from stru import Struct, FieldType, Endianess
-from tests.utils import EnhancedStructTestCase, const
+from stru_tests.struct_test_case import StructTestCase, const
 
 import unittest
 
@@ -54,7 +54,7 @@ class VeryEmbedded(Struct):
     d = FieldType.Struct(Inner3)
 
 
-class EmbeddedStructsTests(EnhancedStructTestCase, unittest.TestCase):
+class EmbeddedStructsTests(StructTestCase, unittest.TestCase):
     def create_target(self):
         inner2 = Inner2(a=40, b='wxyzwxyz')
         buff2 = '\x28\x00\x00\x00\x00\x00\x00\x00wxyzwxyz'

@@ -57,10 +57,10 @@ class const(object):
 
 
 # noinspection PyPep8Naming,PyUnresolvedReferences
-class EnhancedStructTestCase(object):
+class StructTestCase(object):
     def __init__(self, *args, **kwargs):
         # noinspection PyArgumentList
-        super(EnhancedStructTestCase, self).__init__(*args, **kwargs)
+        super(StructTestCase, self).__init__(*args, **kwargs)
         self.obj = None
         self.buff = None
         self.cls = None

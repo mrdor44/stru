@@ -1,5 +1,5 @@
 from stru import FieldType, Struct, Endianess
-from tests.utils import EnhancedStructTestCase, const
+from stru_tests.struct_test_case import StructTestCase, const
 
 import unittest
 import struct
@@ -31,7 +31,7 @@ class GiantStruct(Struct):
     qword = FieldType.QWORD
 
 
-class SupportedTypesTest(EnhancedStructTestCase, unittest.TestCase):
+class SupportedTypesTest(StructTestCase, unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.unsigned_1_byte = [GiantStruct.byt]

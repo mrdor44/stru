@@ -1,4 +1,3 @@
-import collections
 from collections import OrderedDict
 
 from stru.field.field import Field
@@ -25,21 +24,21 @@ class MetaStruct(type):
         cls._fields = OrderedDict(cls._fields) if cls._fields is not None else OrderedDict()
         cls._defaults = cls._defaults[:] if cls._defaults is not None else []
 
-        local_fields = [(field_obj, field_name) for field_name, field_obj in d.items()
-                        if isinstance(field_obj, Field)]
+        local_fields = {field_obj: field_name for field_name, field_obj in d.items()
+                        if isinstance(field_obj, Field)}
 
         # cls._fields is an OrderedDict({field_obj: field_name})
         # cls._defaults is a list([(field_name, default_value)])
         cls._fields.update(local_fields)
         cls._defaults += [(field_name, field_obj.default)
-                          for field_obj, field_name in local_fields if hasattr(field_obj, 'default')]
+                          for field_obj, field_name in local_fields.items() if hasattr(field_obj, 'default')]
 
         for field_obj in cls._fields.keys():
             field_obj.endianess = cls._endianess
 
     @classmethod
     def __prepare__(metacls, name, bases):
-        return collections.OrderedDict()
+        return OrderedDict()
 
     def __len__(self):
         return sum(map(len, self._fields.keys()))

@@ -221,7 +221,7 @@ class StringField(PrimitiveField):
         # __getitem__ can be called upon a StringField to create a string with longer length
         # __getitem__ is not supported on strings longer than one, as we don't support arrays of strings
         # 2 = 1 for endianess, 1 for 's'
-        if len(filter(lambda c: c not in '@!=<>', self.format_string)) == 1:
+        if len(list(filter(lambda c: c not in '@!=<>', self.format_string))) == 1:
             return StringField('{:d}s'.format(num))
         raise NotImplementedError('Arrays of strings not implemented')
 
@@ -311,6 +311,25 @@ class NonPrimitivesArrayField(NonPrimitiveField, ArrayField):
             value = self.base.unpack(buf, target_cls, other_fields)
             values.append(value)
         return values
+
+
+class CharArrayField(PrimitivesArrayField):
+    def pack(self, values, source_obj):
+        if isinstance(values, str):
+            # Char can be assigned with str only, but struct module assumes
+            # it is of bytes type
+            values = list(map(lambda c: c.encode('ascii'), values))
+        elif isinstance(values, list):
+            assert all(isinstance(e, str) for e in values)
+            values = list(map(lambda c: c.encode('ascii'), values))
+        return super().pack(values, source_obj)
+
+    def unpack(self, buf, target_cls, other_fields):
+        value = super().unpack(buf, target_cls, other_fields)
+        assert isinstance(value, list)
+        assert all(isinstance(e, bytes) for e in value)
+        value = list(map(lambda b: b.decode('ascii'), value))
+        return value
 
 
 class EmbeddedStructField(NonPrimitiveField):
@@ -501,6 +520,15 @@ class CharField(PrimitiveField):
     @property
     def min(self):
         return chr(0)
+
+    def __getitem__(self, length):
+        """
+        Creates an array of chars.
+        EXAMPLE:
+            values = FieldType.Char[10]
+        :param length: The length of the array to create
+        """
+        return CharArrayField(length, self)
 
     def validate_value(self, obj, value, field_name):
         if value is None:

@@ -1,5 +1,5 @@
 from stru import Struct, Endianess, FieldType
-from tests.utils import EnhancedStructTestCase
+from stru_tests.struct_test_case import StructTestCase
 
 import unittest
 
@@ -11,7 +11,7 @@ class Person(Struct):
     age = FieldType.BYTE
 
 
-class StringsTest(EnhancedStructTestCase, unittest.TestCase):
+class StringsTest(StructTestCase, unittest.TestCase):
     def create_target(self):
         obj = Person(initial='r', name='Wayne', age=25)
         buff = 'rWayne\x00\x00\x00\x00\x00\x19'

@@ -1,7 +1,7 @@
 from stru.enhanced_struct import Endianess
 from stru.field_type import FieldType
 from stru.stru_struct import Struct
-from tests.utils import EnhancedStructTestCase, const
+from stru_tests.struct_test_case import StructTestCase, const
 
 import unittest
 
@@ -37,7 +37,7 @@ class StandardNativePoint(Struct):
 
 
 # noinspection PyUnresolvedReferences
-class AbstractPointTests(EnhancedStructTestCase):
+class AbstractPointTests(StructTestCase):
     def get_target_class(self):
         raise NotImplementedError()
 

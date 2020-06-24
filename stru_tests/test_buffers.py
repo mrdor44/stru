@@ -1,7 +1,7 @@
 from stru import (Endianess, FieldType, UnsupportedOperationException,
                   DependencyNoneException, DependencyInvalidValueException, DependencyNotInClassException)
 from stru.stru_struct import Struct
-from tests.utils import EnhancedStructTestCase
+from stru_tests.struct_test_case import StructTestCase
 
 import unittest
 
@@ -13,7 +13,7 @@ class Boo(Struct):
     c = FieldType.Buffer(a)
 
 
-class BuffersTests(EnhancedStructTestCase, unittest.TestCase):
+class BuffersTests(StructTestCase, unittest.TestCase):
     def create_target(self):
         obj = Boo(a=4, b=2, c='abcd')
         buff = '\x04\x02abcd'
@@ -37,7 +37,7 @@ class BuffersTests(EnhancedStructTestCase, unittest.TestCase):
         self.obj.c = 'ab'
 
 
-class BuffersWithNullTerminatorsTests(EnhancedStructTestCase, unittest.TestCase):
+class BuffersWithNullTerminatorsTests(StructTestCase, unittest.TestCase):
     def create_target(self):
         obj = Boo(a=4, b=2, c='\x00a\x00b')
         buff = '\x04\x02\x00a\x00b'

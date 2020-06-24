@@ -1,5 +1,5 @@
 from stru import Struct, Endianess, FieldType
-from tests.utils import EnhancedStructTestCase, const
+from stru_tests.struct_test_case import StructTestCase, const
 
 import unittest
 
@@ -26,7 +26,7 @@ class Derived(Base3):
     c = FieldType.SignedWORD[2]
 
 
-class InheritanceTests(EnhancedStructTestCase, unittest.TestCase):
+class InheritanceTests(StructTestCase, unittest.TestCase):
     def create_target(self):
         inner = Base2(x=3, a='b', y=4)
         inner_buff = '\x00\x00\x00\x03' 'b' '\x05' '\x00\x00\x00\x04' '\x00'

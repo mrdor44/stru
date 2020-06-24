@@ -1,8 +1,8 @@
 import unittest
-
+import os; print(os.getcwd())
 from stru import FieldType, Endianess
 from stru.stru_struct import Struct
-from tests.utils import EnhancedStructTestCase, const
+from stru_tests.struct_test_case import StructTestCase, const
 
 
 class Packet(Struct):
@@ -12,10 +12,10 @@ class Packet(Struct):
     crc = FieldType.WORD
 
 
-class ArraysTest(EnhancedStructTestCase, unittest.TestCase):
+class ArraysTest(StructTestCase, unittest.TestCase):
     def create_target(self):
         obj = Packet(magic=0xABCD, data=[0xEF] * Packet.data.count, crc=0x97)
-        buff = '\x00\x00\xAB\xCD' + '\x00\x00\x00\xef' * 20 + '\x00\x97'
+        buff = b'\x00\x00\xAB\xCD' + b'\x00\x00\x00\xef' * 20 + b'\x00\x97'
         return obj, buff
 
     def get_fields(self):
@@ -69,13 +69,13 @@ class Various(Struct):
     chars = FieldType.Char[8]
 
 
-class VariousArraysTest(EnhancedStructTestCase, unittest.TestCase):
+class VariousArraysTest(StructTestCase, unittest.TestCase):
     def create_target(self):
         obj = Various(signed=[1, 2, 3],
                       unsigned=[4, 5, 6, 7],
                       bools=[True, False] * 3,
                       chars=['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'])
-        buff = '\x01\x00\x02\x00\x03\x00' '\x04\x00\x05\x00\x06\x00\x07\x00' + '\x01\x00' * 3 + 'abcdefgh'
+        buff = b'\x01\x00\x02\x00\x03\x00' b'\x04\x00\x05\x00\x06\x00\x07\x00' + b'\x01\x00' * 3 + b'abcdefgh'
         return obj, buff
 
     def get_fields(self):

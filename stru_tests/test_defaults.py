@@ -1,6 +1,6 @@
 from stru import Endianess, FieldType
 from stru.stru_struct import Struct
-from tests.utils import EnhancedStructTestCase, const
+from stru_tests.struct_test_case import StructTestCase, const
 
 import unittest
 
@@ -22,7 +22,7 @@ class AllDefault(Struct):
     g = FieldType.Struct(Point)
 
 
-class DefaultsTest(EnhancedStructTestCase, unittest.TestCase):
+class DefaultsTest(StructTestCase, unittest.TestCase):
     def create_target(self):
         obj = AllDefault(g=Point())
         buff = ('\xff\xf6' '\x00\x14' '\x01' 'bla\x00\x00\x00\x00\x00' 'a' '\x00\x00\x00\x01' '\x00\x00\x00\x02'

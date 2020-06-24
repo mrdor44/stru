@@ -1,6 +1,6 @@
 from stru import (Struct, Endianess, FieldType, UnsupportedOperationException,
                   DependencyInvalidValueException, DependencyNoneException, DependencyNotInClassException)
-from tests.utils import EnhancedStructTestCase, const
+from stru_tests.struct_test_case import StructTestCase, const
 
 import unittest
 
@@ -29,7 +29,7 @@ class Onion(Struct):
     })
 
 
-class UnionTests1(EnhancedStructTestCase, unittest.TestCase):
+class UnionTests1(StructTestCase, unittest.TestCase):
     def create_target(self):
         obj = Onion(a=-10, b='ab', c=0xFF, d=[1, 2, 3])
         buff = '\xf6' 'ab\x00\x00' '\xff' '\x00\x01\x00\x02\x00\x03'
@@ -60,7 +60,7 @@ class UnionTests1(EnhancedStructTestCase, unittest.TestCase):
             self.obj.b = 'sadfsadfsadf'
 
 
-class UnionTests2(EnhancedStructTestCase, unittest.TestCase):
+class UnionTests2(StructTestCase, unittest.TestCase):
     def create_target(self):
         obj = Onion(a=-10, b='c', c=0xFF, d='a')
         buff = '\xf6' 'c\x00\x00\x00' '\xff' 'a'
@@ -70,7 +70,7 @@ class UnionTests2(EnhancedStructTestCase, unittest.TestCase):
         self.assertEqual(len(self.obj), len(self.buff))
 
 
-class UnionTests3(EnhancedStructTestCase, unittest.TestCase):
+class UnionTests3(StructTestCase, unittest.TestCase):
     def create_target(self):
         obj = Onion(a=1, b=400, c=1, d=MyWord(a=2))
         buff = '\x01' '\x00\x00\x01\x90' '\x01' '\x02\x00'
