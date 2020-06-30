@@ -29,10 +29,11 @@ class Derived(Base3):
 class InheritanceTests(StructTestCase, unittest.TestCase):
     def create_target(self):
         inner = Base2(x=3, a='b', y=4)
-        inner_buff = '\x00\x00\x00\x03' 'b' '\x05' '\x00\x00\x00\x04' '\x00'
+        inner_buff = b'\x00\x00\x00\x03' b'b' b'\x05' b'\x00\x00\x00\x04' b'\x00'
 
         obj = Derived(x=1, a='a', y=2, w='abcd', d=inner, z=True, c=[5, 6])
-        buff = '\x00\x00\x00\x01' 'a' '\x05' '\x00\x00\x00\x02' '\x00' 'abcd' + inner_buff + '\x01' '\x00\x05\x00\x06'
+        buff = (b'\x00\x00\x00\x01' b'a' b'\x05' b'\x00\x00\x00\x02' b'\x00' b'abcd'
+                + inner_buff + b'\x01' b'\x00\x05\x00\x06')
 
         return obj, buff
 

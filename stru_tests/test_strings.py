@@ -14,7 +14,7 @@ class Person(Struct):
 class StringsTest(StructTestCase, unittest.TestCase):
     def create_target(self):
         obj = Person(initial='r', name='Wayne', age=25)
-        buff = 'rWayne\x00\x00\x00\x00\x00\x19'
+        buff = b'rWayne\x00\x00\x00\x00\x00\x19'
         return obj, buff
 
     def test_lengths(self):

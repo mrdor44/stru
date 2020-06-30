@@ -32,7 +32,7 @@ class Onion(Struct):
 class UnionTests1(StructTestCase, unittest.TestCase):
     def create_target(self):
         obj = Onion(a=-10, b='ab', c=0xFF, d=[1, 2, 3])
-        buff = '\xf6' 'ab\x00\x00' '\xff' '\x00\x01\x00\x02\x00\x03'
+        buff = b'\xf6' b'ab\x00\x00' b'\xff' b'\x00\x01\x00\x02\x00\x03'
         return obj, buff
 
     def get_fields(self):
@@ -48,6 +48,7 @@ class UnionTests1(StructTestCase, unittest.TestCase):
         with self.assertRaises(UnsupportedOperationException):
             len(Onion.d)
         with self.assertRaises(UnsupportedOperationException):
+            # TODO: Fix warnings and static analysis
             len(Onion)
         self.assertEqual(len(self.obj), len(self.buff))
 
@@ -63,7 +64,7 @@ class UnionTests1(StructTestCase, unittest.TestCase):
 class UnionTests2(StructTestCase, unittest.TestCase):
     def create_target(self):
         obj = Onion(a=-10, b='c', c=0xFF, d='a')
-        buff = '\xf6' 'c\x00\x00\x00' '\xff' 'a'
+        buff = b'\xf6' b'c\x00\x00\x00' b'\xff' b'a'
         return obj, buff
 
     def test_lengths(self):
@@ -73,7 +74,7 @@ class UnionTests2(StructTestCase, unittest.TestCase):
 class UnionTests3(StructTestCase, unittest.TestCase):
     def create_target(self):
         obj = Onion(a=1, b=400, c=1, d=MyWord(a=2))
-        buff = '\x01' '\x00\x00\x01\x90' '\x01' '\x02\x00'
+        buff = b'\x01' b'\x00\x00\x01\x90' b'\x01' b'\x02\x00'
         return obj, buff
 
     def test_lengths(self):

@@ -1,4 +1,5 @@
 from stru import FieldType, Struct, Endianess
+from stru.utils import str2bytes
 from stru_tests.struct_test_case import StructTestCase, const
 
 import unittest
@@ -65,7 +66,7 @@ class SupportedTypesTest(StructTestCase, unittest.TestCase):
                           dword=17,
                           qword=19)
         buff = struct.pack('<cHi?hbxBqIlLqfdhQHlLxQ',
-                           obj.char,
+                           str2bytes(obj.char),
                            obj.ushort,
                            obj.i,
                            obj.boo,
@@ -114,7 +115,6 @@ class SupportedTypesTest(StructTestCase, unittest.TestCase):
     def test_invalid_value_assignments(self):
         assignments = {
             'char': [14, 'ab', [], ''],
-            'ushort': ['a', [], ''],
             'boo': ['a', 14, 'abcd', [], ''],
             'pad1': [0, [], ''],
             'pad2': [0, [], ''],
@@ -140,10 +140,18 @@ class SupportedTypesTest(StructTestCase, unittest.TestCase):
             'qword',
         ]
 
-        for field_name, values in assignments.iteritems():
+        for field_name, values in assignments.items():
             for value in values:
                 with self.assertRaises(ValueError):
                     setattr(self.obj, field_name, value)
+
+        # TODO: Use nose tests or pytest
+        with self.assertRaises(TypeError):
+            self.obj.ushort = 'a'
+        with self.assertRaises(TypeError):
+            self.obj.ushort = []
+        with self.assertRaises(TypeError):
+            self.obj.ushort = ''
 
         for field_name in numeric_assignments:
             field_obj = getattr(GiantStruct, field_name)
@@ -152,7 +160,7 @@ class SupportedTypesTest(StructTestCase, unittest.TestCase):
                 with self.assertRaises(ValueError):
                     setattr(self.obj, field_name, value)
 
-        for field_name in assignments.keys() + numeric_assignments:
+        for field_name in list(assignments.keys()) + numeric_assignments:
             setattr(self.obj, field_name, None)
 
     def test_fields_correct_values(self):

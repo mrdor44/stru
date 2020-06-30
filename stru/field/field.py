@@ -177,6 +177,9 @@ class NumericField(PrimitiveField):
     def validate_value(self, obj, value, field_name):
         if value is None:
             return
+        if not isinstance(value, (int, float)):
+            raise TypeError(f'Expected int or float for {field_name}, '
+                            f'got {value!r} of type {type(value)}')
         if value > self.max:
             raise ValueError('Value {value} too large! {field}.max = {max}'
                              .format(value=value, field=field_name, max=self.max))
@@ -214,7 +217,8 @@ class StringField(PrimitiveField):
         if value is None:
             return
         if not isinstance(value, str):
-            raise TypeError('Expected a string, got: {}'.format(type(value)))
+            raise TypeError(f'Expected str for {field_name}, '
+                            f'got {value!r} of type {type(value)}')
         if len(value) > len(self):
             raise ValueError('String "{value}" too long! len({field}) = {max}'
                              .format(value=value, field=field_name, max=len(self)))
