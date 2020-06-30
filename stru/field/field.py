@@ -232,7 +232,7 @@ class StringField(PrimitiveField):
     def unpack(self, buf, target_cls, other_fields):
         # struct.unpack() doesnt stop unpacking on null terminator - it will give us the null terminator as well
         # so we trim it
-        return super(StringField, self).unpack(buf, target_cls, other_fields).split('\x00', 1)[0].decode('ascii')
+        return super(StringField, self).unpack(buf, target_cls, other_fields).split(b'\x00', 1)[0].decode('ascii')
 
 
 # noinspection PyAbstractClass
@@ -545,6 +545,15 @@ class CharField(PrimitiveField):
             raise ValueError('Value {} is not a string'.format(value))
         if len(value) != 1:
             raise ValueError('Expected a 1-length string (a character). Got a string of length {}'.format(len(value)))
+
+    def pack(self, value, source_obj):
+        if isinstance(value, str):
+            value = value.encode('ascii')
+        return struct.pack(self.format_string, value)
+
+    def unpack(self, buf, target_cls, other_fields):
+        value, = struct.unpack(self.format_string, buf.read(len(self)))
+        return value.decode('ascii')
 
 
 class NoValueField(PrimitiveField):
