@@ -1,4 +1,5 @@
 from stru import Struct, FieldType, Endianess
+from stru.utils import int2byte
 from stru_tests.struct_test_case import StructTestCase, const
 
 import unittest
@@ -57,28 +58,30 @@ class VeryEmbedded(Struct):
 class EmbeddedStructsTests(StructTestCase, unittest.TestCase):
     def create_target(self):
         inner2 = Inner2(a=40, b='wxyzwxyz')
-        buff2 = '\x28\x00\x00\x00\x00\x00\x00\x00wxyzwxyz'
+        buff2 = b'\x28\x00\x00\x00\x00\x00\x00\x00wxyzwxyz'
 
         inner5 = Inner5(a='e', b=inner2)
-        buff5 = 'e' + buff2
+        buff5 = b'e' + buff2
 
         inner6 = Inner6(a=[True, False], b=inner5, c=[10, 20, 30])
-        buff6 = '\x01\x00' + buff5 + chr(10) + '\x00' * 7 + chr(20) + '\x00' * 7 + chr(30) + '\x00' * 7
+        buff6 = (b'\x01\x00' + buff5 + int2byte(10) + b'\x00' * 7 + int2byte(20)
+                 + b'\x00' * 7 + int2byte(30) + b'\x00' * 7)
 
         inner7 = Inner7(a=['a', 'b', 'c', 'd'], b=inner6)
-        buff7 = 'abcd' + buff6
+        buff7 = b'abcd' + buff6
 
         inner1 = Inner1(a=1, b=False)
-        buff1 = '\x00\x00\x00\x01' '\x00'
+        buff1 = b'\x00\x00\x00\x01' b'\x00'
 
         inner4 = Inner4(a=inner1)
-        buff4 = buff1 + '\x00'
+        buff4 = buff1 + b'\x00'
 
         inner3 = Inner3()
-        buff3 = ''
+        buff3 = b''
 
         obj = VeryEmbedded(a=inner4, b=inner7, c=[255, 254, 253, 252], d=inner3)
-        buff = buff4 + buff7 + chr(255) + chr(254) + chr(253) + chr(252) + buff3
+        buff = (buff4 + buff7 + int2byte(255) + int2byte(254) + int2byte(253)
+                + int2byte(252) + buff3)
 
         return obj, buff
 

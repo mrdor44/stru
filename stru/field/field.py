@@ -3,6 +3,8 @@ from .exceptions import (DependencyInvalidValueException, DependencyNoneExceptio
 
 import struct
 
+from ..utils import str2bytes, bytes2str
+
 BITS_PER_BYTE = 8
 
 
@@ -227,12 +229,12 @@ class StringField(PrimitiveField):
 
     def pack(self, value, source_obj):
         assert isinstance(value, str)
-        return super().pack(value.encode('ascii'), source_obj)
+        return super().pack(str2bytes(value), source_obj)
 
     def unpack(self, buf, target_cls, other_fields):
         # struct.unpack() doesnt stop unpacking on null terminator - it will give us the null terminator as well
         # so we trim it
-        return super(StringField, self).unpack(buf, target_cls, other_fields).split(b'\x00', 1)[0].decode('ascii')
+        return bytes2str(super(StringField, self).unpack(buf, target_cls, other_fields).split(b'\x00', 1)[0])
 
 
 # noinspection PyAbstractClass
@@ -322,17 +324,17 @@ class CharArrayField(PrimitivesArrayField):
         if isinstance(values, str):
             # Char can be assigned with str only, but struct module assumes
             # it is of bytes type
-            values = list(map(lambda c: c.encode('ascii'), values))
+            values = list(map(str2bytes, values))
         elif isinstance(values, list):
             assert all(isinstance(e, str) for e in values)
-            values = list(map(lambda c: c.encode('ascii'), values))
+            values = list(map(str2bytes, values))
         return super().pack(values, source_obj)
 
     def unpack(self, buf, target_cls, other_fields):
         value = super().unpack(buf, target_cls, other_fields)
         assert isinstance(value, list)
         assert all(isinstance(e, bytes) for e in value)
-        value = list(map(lambda b: b.decode('ascii'), value))
+        value = list(map(bytes2str, value))
         return value
 
 
@@ -435,10 +437,10 @@ class BufferField(NonPrimitiveField):
             raise ValueError('Buffer "{value}" too long! len({field}) = {max}'
                              .format(value=value, field=field_name, max=length))
 
-    def pack(self, value, source_obj):
+    def pack(self, value: bytes, source_obj):
         # When packing and unpacking, we use PrimitiveField to avoid the additional processing StringField does
         length = self._get_length_field_value(source_obj)
-        return StringField('{:d}s'.format(length)).pack(value.decode('ascii'), source_obj)
+        return StringField('{:d}s'.format(length)).pack(bytes2str(value), source_obj)
 
     def unpack(self, buf, target_cls, other_fields):
         length = self._validate_length_value(other_fields[self._get_length_field_name(target_cls)])
@@ -548,12 +550,12 @@ class CharField(PrimitiveField):
 
     def pack(self, value, source_obj):
         if isinstance(value, str):
-            value = value.encode('ascii')
+            value = str2bytes(value)
         return struct.pack(self.format_string, value)
 
     def unpack(self, buf, target_cls, other_fields):
         value, = struct.unpack(self.format_string, buf.read(len(self)))
-        return value.decode('ascii')
+        return bytes2str(value)
 
 
 class NoValueField(PrimitiveField):

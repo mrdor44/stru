@@ -1,5 +1,5 @@
 import unittest
-import os; print(os.getcwd())
+
 from stru import FieldType, Endianess
 from stru.stru_struct import Struct
 from stru_tests.struct_test_case import StructTestCase, const
