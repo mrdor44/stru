@@ -442,7 +442,7 @@ class BufferField(NonPrimitiveField):
 
     def unpack(self, buf, target_cls, other_fields):
         length = self._validate_length_value(other_fields[self._get_length_field_name(target_cls)])
-        return PrimitiveField('{:d}s'.format(length)).unpack(buf, target_cls, other_fields).decode('ascii')
+        return PrimitiveField('{:d}s'.format(length)).unpack(buf, target_cls, other_fields)
 
     def _get_length_field_name(self, cls):
         length_field_name = cls._fields.get(self._length_field_obj, None)

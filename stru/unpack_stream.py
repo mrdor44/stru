@@ -37,6 +37,7 @@ class StringBufferStream(UnpackStream):
         return self._length - self._buff.tell()
 
 
+# TODO: Use Struct
 # TODO: Unite this with StringBufferStream
 class BytesBufferStream(UnpackStream):
     def __init__(self, buff, *args, **kwargs):

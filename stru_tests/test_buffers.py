@@ -23,6 +23,8 @@ class BuffersTests(StructTestCase, unittest.TestCase):
         with self.assertRaises(UnsupportedOperationException):
             len(Boo.c)
         with self.assertRaises(UnsupportedOperationException):
+            # noinspection PyTypeChecker
+            # Really doesn't work, hence we assert an exception is raised
             len(Boo)
         self.assertEqual(len(self.obj), len(self.buff))
 
